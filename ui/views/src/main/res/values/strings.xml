@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="posts_error">Posts could not be loaded.</string>
+    <string name="posts_retry">Retry</string>
+    <string name="posts_empty">No posts left.</string>
+</resources>
