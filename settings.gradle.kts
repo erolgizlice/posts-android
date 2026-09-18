@@ -29,3 +29,5 @@ rootProject.name = "Posts"
 include(":app")
 include(":domain")
 include(":data")
+include(":presentation")
+include(":ui:views")
