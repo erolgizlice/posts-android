@@ -3,4 +3,6 @@
     <string name="posts_error">Posts could not be loaded.</string>
     <string name="posts_retry">Retry</string>
     <string name="posts_empty">No posts left.</string>
+    <string name="post_deleted">Post deleted</string>
+    <string name="post_undo">Undo</string>
 </resources>
