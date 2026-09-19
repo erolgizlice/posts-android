@@ -28,4 +28,8 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     implementation(libs.kotlinx.coroutines.core)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
 }

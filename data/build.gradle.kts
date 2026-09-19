@@ -30,4 +30,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     ksp(libs.moshi.codegen)
     implementation(libs.kotlinx.coroutines.core)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
