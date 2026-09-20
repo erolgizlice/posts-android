@@ -24,8 +24,14 @@ android {
     buildTypes {
         release {
             optimization {
-                enable = false
+                enable = true
             }
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
+            // Signed with the debug key so the APK in dist/ can be installed for review.
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     buildFeatures {
