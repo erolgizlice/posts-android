@@ -2,7 +2,6 @@ package com.erolgizlice.posts.ui.views
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -64,7 +63,7 @@ class PostDetailFragment : Fragment(R.layout.fragment_post_detail) {
 
     companion object {
         fun newInstance(postId: Int) = PostDetailFragment().apply {
-            arguments = bundleOf(PostDetailViewModel.ARG_POST_ID to postId)
+            arguments = Bundle().apply { putInt(PostDetailViewModel.ARG_POST_ID, postId) }
         }
     }
 }
