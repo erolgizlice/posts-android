@@ -27,11 +27,12 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxDefaults
+import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -108,15 +109,14 @@ private fun PostsScreen(
                 is PostsUiState.Content -> if (state.posts.isEmpty()) {
                     Text("No posts left.")
                 } else {
-                    // A restored post is inserted above the anchor the list keeps, so it comes back
-                    // off-screen unless the list scrolls to it.
                     LaunchedEffect(state.posts, restoredId) {
                         val id = restoredId ?: return@LaunchedEffect
                         val index = state.posts.indexOfFirst { it.id == id }
-                        if (index != -1) {
-                            listState.scrollToItem(index)
-                            restoredId = null
-                        }
+                        if (index == -1) return@LaunchedEffect
+                        // Only when it landed above the viewport; anywhere else the reader's
+                        // position is worth more than showing the row again.
+                        if (index < listState.firstVisibleItemIndex) listState.scrollToItem(index)
+                        restoredId = null
                     }
                     PostList(
                         listState = listState,
@@ -152,23 +152,14 @@ private fun PostList(
     onSwiped: (Post) -> Unit,
 ) {
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
-        // The key keeps each row's composition with its post, which is what DiffUtil does by hand
-        // on the View side.
         items(posts, key = { it.id }) { post ->
-            val dismissState = rememberSwipeToDismissBoxState(
-                confirmValueChange = { value ->
-                    if (value == SwipeToDismissBoxValue.Settled) {
-                        false
-                    } else {
-                        onSwiped(post)
-                        true
-                    }
-                },
-            )
-            // The list keeps saveable state per key, so a restored post comes back still dismissed:
-            // its row would sit off-screen with only the red background showing.
-            LaunchedEffect(post.id) {
-                if (dismissState.currentValue != SwipeToDismissBoxValue.Settled) dismissState.reset()
+            // Plain remember: the saveable state would bring a restored post back still dismissed.
+            val threshold = SwipeToDismissBoxDefaults.positionalThreshold
+            val dismissState = remember(post.id) {
+                SwipeToDismissBoxState(
+                    initialValue = SwipeToDismissBoxValue.Settled,
+                    positionalThreshold = threshold,
+                )
             }
             Column(Modifier.animateItem()) {
                 SwipeToDismissBox(
@@ -176,6 +167,7 @@ private fun PostList(
                     backgroundContent = {
                         Box(Modifier.fillMaxSize().background(Color(0xFFB3261E)))
                     },
+                    onDismiss = { onSwiped(post) },
                 ) {
                     PostRow(post = post, onClick = { onPostClick(post) })
                 }
@@ -197,7 +189,7 @@ private fun PostRow(post: Post, onClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         GlideImage(
-            // Keyed by id, not position, for the same reason as the View list: the URL is the cache key.
+            // Keyed by id, not position: the URL is the image cache key.
             model = "https://picsum.photos/300/300?random=${post.id}&grayscale",
             contentDescription = null,
             modifier = Modifier.size(56.dp).clip(CircleShape),
