@@ -24,6 +24,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ComposePostsActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.erolgizlice.posts.OPEN_COMPOSE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ComposePostDetailActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

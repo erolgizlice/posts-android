@@ -12,4 +12,5 @@
     <string name="post_save">Save</string>
     <string name="post_title_required">Title cannot be empty</string>
     <string name="post_back">Back</string>
+    <string name="posts_open_compose">Open Compose mirror</string>
 </resources>

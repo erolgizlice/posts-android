@@ -1,5 +1,6 @@
 package com.erolgizlice.posts.ui.views
 
+import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -47,6 +48,17 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
         )
         ItemTouchHelper(SwipeToDeleteCallback(binding, adapter)).attachToRecyclerView(binding.list)
         binding.retry.setOnClickListener { viewModel.retry() }
+        binding.toolbar.inflateMenu(R.menu.posts)
+        binding.toolbar.setOnMenuItemClickListener { item ->
+            // The Compose mirror lives in :app, which this module cannot see, so it is reached by
+            // an action the app module declares.
+            if (item.itemId == R.id.openCompose) {
+                startActivity(Intent(ACTION_OPEN_COMPOSE).setPackage(requireContext().packageName))
+                true
+            } else {
+                false
+            }
+        }
 
         // Bottom inset lives on the list so rows scroll under the navigation bar.
         ViewCompat.setOnApplyWindowInsetsListener(binding.list) { v, insets ->
@@ -103,6 +115,10 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
         binding?.list?.adapter = null
         binding = null
         super.onDestroyView()
+    }
+
+    private companion object {
+        const val ACTION_OPEN_COMPOSE = "com.erolgizlice.posts.OPEN_COMPOSE"
     }
 
     private inner class SwipeToDeleteCallback(
