@@ -165,13 +165,22 @@ private fun PostList(
                     }
                 },
             )
-            SwipeToDismissBox(
-                state = dismissState,
-                backgroundContent = { Box(Modifier.fillMaxSize().background(Color(0xFFB3261E))) },
-            ) {
-                PostRow(post = post, onClick = { onPostClick(post) })
+            // The list keeps saveable state per key, so a restored post comes back still dismissed:
+            // its row would sit off-screen with only the red background showing.
+            LaunchedEffect(post.id) {
+                if (dismissState.currentValue != SwipeToDismissBoxValue.Settled) dismissState.reset()
             }
-            HorizontalDivider()
+            Column(Modifier.animateItem()) {
+                SwipeToDismissBox(
+                    state = dismissState,
+                    backgroundContent = {
+                        Box(Modifier.fillMaxSize().background(Color(0xFFB3261E)))
+                    },
+                ) {
+                    PostRow(post = post, onClick = { onPostClick(post) })
+                }
+                HorizontalDivider()
+            }
         }
     }
 }
