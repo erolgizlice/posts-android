@@ -3,6 +3,7 @@ package com.erolgizlice.posts.presentation
 import app.cash.turbine.test
 import com.erolgizlice.posts.domain.Post
 import com.erolgizlice.posts.domain.PostsUnavailableException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -11,6 +12,7 @@ import org.junit.Rule
 import org.junit.Test
 import java.io.IOException
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class PostsViewModelTest {
 
     @get:Rule
