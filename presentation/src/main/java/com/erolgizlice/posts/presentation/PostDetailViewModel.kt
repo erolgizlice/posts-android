@@ -23,10 +23,7 @@ class PostDetailViewModel @Inject constructor(
         "PostDetailFragment needs a $ARG_POST_ID argument"
     }
 
-    /**
-     * Read from the same list the posts screen observes, so an edit made here needs no result to
-     * be passed back. Null means the post is gone, which is how the screen knows to close.
-     */
+    /** The same list the posts screen observes; null once the post is gone. */
     val post: StateFlow<Post?> = repository.posts
         .map { posts -> posts.firstOrNull { it.id == postId } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), null)

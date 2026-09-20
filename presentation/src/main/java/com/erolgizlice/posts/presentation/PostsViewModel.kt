@@ -65,7 +65,7 @@ class PostsViewModel @Inject constructor(
     }
 
     private companion object {
-        /** Keeps the flow alive across a configuration change without resubscribing. */
+        /** Long enough to survive a configuration change. */
         const val STOP_TIMEOUT_MILLIS = 5_000L
     }
 }

@@ -34,7 +34,6 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
 
     private var binding: FragmentPostsBinding? = null
 
-    /** Set when an undo puts a post back, so the list can scroll to where it landed. */
     private var pendingScrollToId: Int? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,8 +48,7 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
         ItemTouchHelper(SwipeToDeleteCallback(binding, adapter)).attachToRecyclerView(binding.list)
         binding.retry.setOnClickListener { viewModel.retry() }
 
-        // The list keeps its own bottom inset and draws through it, so rows scroll under the
-        // navigation bar instead of stopping above it.
+        // Bottom inset lives on the list so rows scroll under the navigation bar.
         ViewCompat.setOnApplyWindowInsetsListener(binding.list) { v, insets ->
             v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom)
             insets
@@ -76,8 +74,7 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
             adapter.submitList(state.posts) {
                 val restoredId = pendingScrollToId ?: return@submitList
                 pendingScrollToId = null
-                // A restored post is inserted above the anchor RecyclerView keeps while scrolling,
-                // so without this the row comes back off-screen and the undo looks like a no-op.
+                // Without this the restored row lands above the scroll anchor, off-screen.
                 val index = state.posts.indexOfFirst { it.id == restoredId }
                 if (index != -1) binding.list.scrollToPosition(index)
             }

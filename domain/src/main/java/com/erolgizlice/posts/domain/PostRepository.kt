@@ -2,18 +2,13 @@ package com.erolgizlice.posts.domain
 
 import kotlinx.coroutines.flow.Flow
 
-/**
- * Single source of truth for posts: reads are observed, writes are commands. A screen never hands
- * a result to another screen; it changes the posts here and every observer sees the new list.
- */
+/** Single source of truth for posts: reads are observed, writes are commands. */
 interface PostRepository {
 
     /** The posts, always ordered by [Post.id]. */
     val posts: Flow<List<Post>>
 
-    /**
-     * @throws PostsUnavailableException when the posts cannot be fetched.
-     */
+    /** @throws PostsUnavailableException when the posts cannot be fetched. */
     suspend fun ensureLoaded()
 
     suspend fun update(post: Post)

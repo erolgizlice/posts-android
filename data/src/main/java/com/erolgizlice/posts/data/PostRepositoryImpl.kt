@@ -14,10 +14,7 @@ import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Keeps the posts in memory and serves every screen from that one list. The API is read once and
- * never overwrites local edits, because jsonplaceholder does not persist writes.
- */
+/** Loads once and keeps the list in memory, so local edits are not overwritten by a refetch. */
 @Singleton
 internal class PostRepositoryImpl @Inject constructor(
     private val api: PostApi,

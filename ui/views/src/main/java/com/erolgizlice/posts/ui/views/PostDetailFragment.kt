@@ -20,7 +20,7 @@ class PostDetailFragment : Fragment(R.layout.fragment_post_detail) {
 
     private var binding: FragmentPostDetailBinding? = null
 
-    /** The fields are filled from the post once; later emissions are this screen's own edits. */
+    /** Later emissions are this screen's own edits, so the fields are filled once. */
     private var fieldsFilled = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

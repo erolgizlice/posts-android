@@ -22,10 +22,7 @@ internal class PostAdapter(
         holder.bind(getItem(position))
     }
 
-    /**
-     * A payload means only the text changed, so the image is left alone: reloading it would make
-     * the row flicker every time a title is edited.
-     */
+    /** A payload means only the text changed, so the image is left alone. */
     override fun onBindViewHolder(
         holder: PostViewHolder,
         position: Int,
@@ -46,8 +43,8 @@ internal class PostAdapter(
         fun bind(post: Post) {
             bindText(post)
             binding.root.setOnClickListener { onClick(post) }
-            // Keyed by post id rather than adapter position: the URL is Glide's cache key, so a
-            // stable id keeps each row's image stable once rows shift after a deletion.
+            // Keyed by id, not position: the URL is Glide's cache key, so rows keep their image
+            // when the list shifts after a deletion.
             Glide.with(binding.image)
                 .load("https://picsum.photos/300/300?random=${post.id}&grayscale")
                 .placeholder(R.drawable.image_placeholder)
@@ -61,7 +58,6 @@ internal class PostAdapter(
     }
 
     private companion object {
-        /** Marks a rebind that may skip the image. */
         val TEXT_CHANGED = Any()
 
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Post>() {
@@ -69,8 +65,7 @@ internal class PostAdapter(
 
             override fun areContentsTheSame(oldItem: Post, newItem: Post) = oldItem == newItem
 
-            // Reached only for two posts with the same id and different content, and the image
-            // depends on the id alone, so the difference is always text.
+            // Same id, different content: the image depends on the id, so only text can differ.
             override fun getChangePayload(oldItem: Post, newItem: Post): Any = TEXT_CHANGED
         }
     }
