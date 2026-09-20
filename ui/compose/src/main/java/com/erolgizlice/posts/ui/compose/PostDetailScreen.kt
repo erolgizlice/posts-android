@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -57,10 +58,10 @@ fun PostDetailRoute(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Edit post") },
+                title = { Text(stringResource(R.string.post_detail_title)) },
                 navigationIcon = {
                     IconButton(onClick = onDone) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.post_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -84,15 +85,15 @@ fun PostDetailRoute(
                     title = it
                     titleError = false
                 },
-                label = { Text("Title") },
+                label = { Text(stringResource(R.string.post_field_title)) },
                 isError = titleError,
-                supportingText = { if (titleError) Text("Title cannot be empty") },
+                supportingText = { if (titleError) Text(stringResource(R.string.post_title_required)) },
                 modifier = Modifier.fillMaxWidth(),
             )
             OutlinedTextField(
                 value = body,
                 onValueChange = { body = it },
-                label = { Text("Description") },
+                label = { Text(stringResource(R.string.post_field_body)) },
                 minLines = 4,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -111,7 +112,7 @@ fun PostDetailRoute(
                     .fillMaxWidth()
                     .padding(top = 24.dp),
             ) {
-                Text("Save")
+                Text(stringResource(R.string.post_save))
             }
         }
     }

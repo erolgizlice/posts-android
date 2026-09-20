@@ -42,9 +42,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -79,6 +81,8 @@ private fun PostsScreen(
     onUndoDelete: (Post) -> Unit,
     onRetry: () -> Unit,
 ) {
+    val deletedMessage = stringResource(R.string.post_deleted)
+    val undoLabel = stringResource(R.string.post_undo)
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -87,7 +91,7 @@ private fun PostsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Posts") },
+                title = { Text(stringResource(R.string.posts_title)) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary,
@@ -101,13 +105,13 @@ private fun PostsScreen(
                 PostsUiState.Loading -> CircularProgressIndicator()
 
                 PostsUiState.Error -> Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Posts could not be loaded.")
+                    Text(stringResource(R.string.posts_error))
                     Spacer(Modifier.size(8.dp))
-                    Button(onClick = onRetry) { Text("Retry") }
+                    Button(onClick = onRetry) { Text(stringResource(R.string.posts_retry)) }
                 }
 
                 is PostsUiState.Content -> if (state.posts.isEmpty()) {
-                    Text("No posts left.")
+                    Text(stringResource(R.string.posts_empty))
                 } else {
                     LaunchedEffect(state.posts, restoredId) {
                         val id = restoredId ?: return@LaunchedEffect
@@ -126,8 +130,8 @@ private fun PostsScreen(
                             onDelete(post)
                             scope.launch {
                                 val result = snackbarHostState.showSnackbar(
-                                    message = "Post deleted",
-                                    actionLabel = "Undo",
+                                    message = deletedMessage,
+                                    actionLabel = undoLabel,
                                     duration = SnackbarDuration.Short,
                                 )
                                 if (result == SnackbarResult.ActionPerformed) {
@@ -210,5 +214,41 @@ private fun PostRow(post: Post, onClick: () -> Unit) {
                 overflow = TextOverflow.Ellipsis,
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PostsScreenPreview() {
+    PostsTheme {
+        PostsScreen(
+            state = PostsUiState.Content(
+                List(3) { index ->
+                    Post(
+                        id = index + 1,
+                        title = "A post title that runs on to a second line",
+                        body = "First line of the body\nSecond line of the body",
+                    )
+                },
+            ),
+            onPostClick = {},
+            onDelete = {},
+            onUndoDelete = {},
+            onRetry = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PostsScreenErrorPreview() {
+    PostsTheme {
+        PostsScreen(
+            state = PostsUiState.Error,
+            onPostClick = {},
+            onDelete = {},
+            onUndoDelete = {},
+            onRetry = {},
+        )
     }
 }
