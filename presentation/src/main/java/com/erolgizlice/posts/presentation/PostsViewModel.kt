@@ -7,7 +7,6 @@ import com.erolgizlice.posts.domain.PostRepository
 import com.erolgizlice.posts.domain.PostsUnavailableException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -32,7 +31,7 @@ class PostsViewModel @Inject constructor(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+            started = WhileUiSubscribed,
             initialValue = PostsUiState.Loading,
         )
 
@@ -64,8 +63,4 @@ class PostsViewModel @Inject constructor(
         }
     }
 
-    private companion object {
-        /** Long enough to survive a configuration change. */
-        const val STOP_TIMEOUT_MILLIS = 5_000L
-    }
 }

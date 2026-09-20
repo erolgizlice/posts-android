@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.erolgizlice.posts.domain.Post
 import com.erolgizlice.posts.domain.PostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -26,7 +25,7 @@ class PostDetailViewModel @Inject constructor(
     /** The same list the posts screen observes; null once the post is gone. */
     val post: StateFlow<Post?> = repository.posts
         .map { posts -> posts.firstOrNull { it.id == postId } }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), null)
+        .stateIn(viewModelScope, WhileUiSubscribed, null)
 
     fun save(title: String, body: String) {
         val current = post.value ?: return
@@ -37,7 +36,5 @@ class PostDetailViewModel @Inject constructor(
 
     companion object {
         const val ARG_POST_ID = "postId"
-
-        private const val STOP_TIMEOUT_MILLIS = 5_000L
     }
 }
