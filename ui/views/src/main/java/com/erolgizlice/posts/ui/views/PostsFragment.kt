@@ -86,9 +86,12 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
             adapter.submitList(state.posts) {
                 val restoredId = pendingScrollToId ?: return@submitList
                 pendingScrollToId = null
-                // Without this the restored row lands above the scroll anchor, off-screen.
                 val index = state.posts.indexOfFirst { it.id == restoredId }
-                if (index != -1) binding.list.scrollToPosition(index)
+                val firstVisible = (binding.list.layoutManager as LinearLayoutManager)
+                    .findFirstVisibleItemPosition()
+                // A restored row lands above the scroll anchor, off-screen. Scroll only then:
+                // anywhere else the reader's position is worth more than showing the row again.
+                if (index != -1 && index < firstVisible) binding.list.scrollToPosition(index)
             }
         }
     }
